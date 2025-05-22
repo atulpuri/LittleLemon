@@ -7,7 +7,7 @@ Set up:
 ```
 python manage.py makemigrations
 python manage.py migrate
-python manage.py runserver # starts application
+python manage.py runserver # starts application on port 8000
 ```
 
 You can create an additional super user with the command
