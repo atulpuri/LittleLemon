@@ -2,13 +2,14 @@ from rest_framework import serializers
 from .models import MenuItem, Order, Cart, Category, OrderItem
 from rest_framework.validators import UniqueTogetherValidator 
 from django.contrib.auth.models import User, Group
+from decimal import Decimal
 
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model= Group
         fields = ('id','name')
 
-class UserSerializer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
@@ -25,15 +26,16 @@ class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = MenuItem
         fields = ['id', 'title', 'price', 'featured', 'category', 'category_id']
+        extra_kwargs = {'price': {'min_value': 0} }
 
 class CartSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(write_only=True)
-    user = UserSerializer(read_only=True)
+    user = CustomUserSerializer(read_only=True)
     menuitem_id = serializers.IntegerField(write_only=True)
     menuitem = MenuItemSerializer(read_only=True)
     price = serializers.SerializerMethodField(method_name='calculate_price')
 
-    def calculate_price(self, Cart):
+    def calculate_price(self, Cart: Cart) -> Decimal:
         return Cart.unit_price * Cart.quantity
 
     class Meta:
@@ -42,12 +44,13 @@ class CartSerializer(serializers.ModelSerializer):
         validators = [UniqueTogetherValidator(queryset = Cart.objects.all(),
                                               fields = ['user_id', 'menuitem_id']),
                         ]
+        extra_kwargs = {'quantity': {'min_value': 0} }
 
 class OrderSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(write_only=True)
-    user = UserSerializer(read_only=True) 
+    user = CustomUserSerializer(read_only=True) 
     delivery_crew_id = serializers.IntegerField(write_only=True, allow_null=True)
-    delivery_crew = UserSerializer(read_only=True) 
+    delivery_crew = CustomUserSerializer(read_only=True) 
 
     class Meta:
         model = Order
