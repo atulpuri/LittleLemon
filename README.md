@@ -29,6 +29,7 @@ https://{host}:{port}/docs/
 
 In order to authenticate your API calls, you can add the following to the request headers
 ```
+Header:
 {'Authorization': 'Token {your_token}'}
 ```
 
