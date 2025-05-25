@@ -1,6 +1,5 @@
 # Little Lemon Restauraunt
 
-This is the final project for the Meta: APIs course on coursera.
 It implements a REST API using Django Rest Framework.
 
 Set up:
@@ -32,3 +31,5 @@ In order to authenticate your API calls, you can add the following to the reques
 ```
 {'Authorization': 'Token {your_token}'}
 ```
+
+Please do not copy this repo to submit as the final project for the Meta: APIs course on coursera.
