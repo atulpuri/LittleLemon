@@ -3,8 +3,8 @@ from rest_framework import generics, status, filters
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from .models import MenuItem, Category, Cart, Order, OrderItem
-from .serializers import MenuItemSerializer, CategorySerializer, UserSerializer, CartSerializer, \
-                            OrderSerializer, OrderItemSerializer
+from .serializers import MenuItemSerializer, CategorySerializer, CustomUserSerializer, CartSerializer, \
+                            OrderSerializer, OrderItemSerializer, GroupSerializer
 from django.contrib.auth.models import User, Group
 from django.shortcuts import get_object_or_404
 from .permissions import ManagerPermission, CustomerPermission
@@ -35,7 +35,7 @@ class SingleMenuItemsView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
 class GroupsView(generics.ListAPIView):
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated, ManagerPermission]
     group_mapping = {'manager': 'Manager', 'delivery-crew': 'Delivery Crew'}
 
@@ -60,6 +60,7 @@ class GroupsView(generics.ListAPIView):
 class GroupsDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, ManagerPermission]
     group_mapping = {'manager': 'Manager', 'delivery-crew': 'Delivery Crew'}
+    serializer_class = GroupSerializer
 
     def delete(self, request, group, userId):
         if request.method == 'DELETE':
@@ -159,7 +160,7 @@ class OrdersView(generics.ListAPIView):
                              "order_details": order},
                              status=status.HTTP_201_CREATED)
         
-class SingleOrderView(generics.ListAPIView):
+class SingleOrderView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
