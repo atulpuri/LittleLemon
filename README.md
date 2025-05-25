@@ -1,6 +1,6 @@
 # Little Lemon Restauraunt
 
-It implements a REST API using Django Rest Framework.
+Implementation of a REST API using Django Rest Framework.
 
 Set up:
 ```
